@@ -1,0 +1,6 @@
+{
+  "name": "Bounce to Roll Simulator",
+  "description": "Physics simulation of a ball transitioning from bouncing to rolling on a horizontal surface, based on Rod Cross's research.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

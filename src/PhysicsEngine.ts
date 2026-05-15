@@ -72,27 +72,20 @@ export function runSimulation(params: SimulationParams): DataPoint[] {
         
         const vx1 = vx;
         const omega1 = omega;
-        const S1 = vx1 !== 0 ? (R * omega1) / vx1 : 0;
-
+        
         // vy2 = ey * |vy1|
         vy = ey * Math.abs(vy);
 
+        // Equations from the paper: Transition from bouncing to rolling
         // Equation (4): vx2 = vx1 * [(1 - k*ex)/(1+k) + k*(1+ex)*S1/(1+k)]
-        const vx2 = vx1 * ((1 - k * ex) / (1 + k) + (k * (1 + ex) * S1) / (1 + k));
+        // Substituting S1 = R*omega1/vx1 gives:
+        // vx2 = [vx1 * (1 - k*ex) + k * R * omega1 * (1 + ex)] / (1 + k)
+        const vx2 = (vx1 * (1 - k * ex) + k * R * omega1 * (1 + ex)) / (1 + k);
         
         // Equation (5): omega2 = omega1 * [(k - ex)/(1+k) + (1+ex)/((1+k)*S1)]
-        // Careful if S1 is 0. If S1 is 0, we use specific cases or the identity
-        let omega2;
-        if (Math.abs(vx1) < 1e-6) {
-           // If vx1 is 0, we look at the impulse relation: delta_omega = R * delta_momentum_x / I
-           // This is simpler: omega2 depends on friction. 
-           // In the paper's model, if vx1=0, S1 is undefined. 
-           // Let's assume some small horizontal component or handle separately.
-           // For simplicity, if vx=0, spin doesn't change much horizontal unless there's friction.
-           omega2 = omega1; 
-        } else {
-           omega2 = omega1 * ((k - ex) / (1 + k) + (1 + ex) / ((1 + k) * S1));
-        }
+        // Substituting S1 = R*omega1/vx1 gives:
+        // omega2 = [omega1 * (k - ex) + (1 + ex) * (vx1 / R)] / (1 + k)
+        const omega2 = (omega1 * (k - ex) + (1 + ex) * (vx1 / R)) / (1 + k);
 
         vx = vx2;
         omega = omega2;

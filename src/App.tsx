@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Play, 
@@ -201,12 +201,12 @@ export default function App() {
   const finalCameraX = autoCameraX + cameraOffset.x;
   const finalCameraY = cameraOffset.y;
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: MouseEvent) => {
     setIsDragging(true);
     dragStartRef.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
     const dx = e.clientX - dragStartRef.current.x;
     const dy = e.clientY - dragStartRef.current.y;
@@ -600,7 +600,9 @@ function ParameterInput({ label, value, min, max, step, onChange }: any) {
     <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
       <div className="flex justify-between items-center mb-2">
         <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{label}</label>
-        <span className="text-xs font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded-lg border border-slate-200">{value}</span>
+        <span className="text-xs font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+          {isNaN(value) ? '0' : value}
+        </span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(parseFloat(e.target.value))} className="w-full h-1.5 appearance-none bg-slate-200 rounded-full accent-emerald-500 cursor-pointer" />
     </div>
@@ -612,7 +614,8 @@ function StatBox({ label, value, unit, color = "text-slate-900" }: any) {
     <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100 flex flex-col items-center text-center">
       <div className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter mb-1">{label}</div>
       <div className={cn("text-base font-mono font-bold truncate max-w-full px-1", color)}>
-        {value}<span className="text-[8px] ml-0.5 opacity-40 lowercase font-sans">{unit}</span>
+        {isNaN(Number(value)) ? '0.00' : value}
+        <span className="text-[8px] ml-0.5 opacity-40 lowercase font-sans">{unit}</span>
       </div>
     </div>
   );
@@ -631,7 +634,7 @@ function SummaryStats({ title, point, color }: any) {
         </div>
         <div className="flex flex-col text-right">
           <span className="text-[8px] text-slate-400 font-bold uppercase">Bounces</span>
-          <span className="text-sm font-mono font-bold">{point.bounceCount}</span>
+          <span className="text-sm font-mono font-bold">{isNaN(point.bounceCount) ? 0 : point.bounceCount}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-[8px] text-slate-400 font-bold uppercase">Total Rotation</span>
